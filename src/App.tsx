@@ -1,15 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { supabase } from './lib/supabase'
 import { useSession } from './lib/useSession'
 import { Auth } from './components/Auth'
+import { Objects } from './components/Objects'
+import { Today } from './components/Today'
+import { Grid } from './components/Grid'
 
-type Status =
-  | { state: 'loading' }
-  | { state: 'error'; message: string }
-  | { state: 'ok'; rows: number }
+type Tab = 'grid' | 'today' | 'objects'
 
 function App() {
   const { session, loading } = useSession()
+  const [tab, setTab] = useState<Tab>('grid')
 
   if (loading) {
     return (
@@ -20,22 +21,6 @@ function App() {
   }
 
   if (!session) return <Auth />
-
-  return <Home email={session.user.email ?? ''} />
-}
-
-function Home({ email }: { email: string }) {
-  const [status, setStatus] = useState<Status>({ state: 'loading' })
-
-  useEffect(() => {
-    supabase
-      .from('tracker_object')
-      .select('id', { count: 'exact', head: true })
-      .then(({ error, count }) => {
-        if (error) setStatus({ state: 'error', message: error.message })
-        else setStatus({ state: 'ok', rows: count ?? 0 })
-      })
-  }, [])
 
   return (
     <main className="min-h-screen bg-neutral-950 text-neutral-200 p-6">
@@ -50,26 +35,54 @@ function Home({ email }: { email: string }) {
           </button>
         </header>
 
-        <p className="text-sm text-neutral-500">Signed in as {email}</p>
+        <p className="text-sm text-neutral-500">
+          Signed in as {session.user.email ?? ''}
+        </p>
 
-        <div className="rounded-lg border border-neutral-800 bg-neutral-900 p-4 space-y-2">
-          <p className="text-sm text-neutral-400">Supabase connection</p>
+        <nav className="flex gap-2">
+          <TabButton active={tab === 'grid'} onClick={() => setTab('grid')}>
+            Grid
+          </TabButton>
+          <TabButton active={tab === 'today'} onClick={() => setTab('today')}>
+            Today
+          </TabButton>
+          <TabButton
+            active={tab === 'objects'}
+            onClick={() => setTab('objects')}
+          >
+            Objects
+          </TabButton>
+        </nav>
 
-          {status.state === 'loading' && <p>Checking…</p>}
-
-          {status.state === 'error' && (
-            <p className="text-red-400 font-mono text-sm">{status.message}</p>
-          )}
-
-          {status.state === 'ok' && (
-            <p className="text-green-400">
-              Read {status.rows} row{status.rows === 1 ? '' : 's'} from
-              tracker_object
-            </p>
-          )}
-        </div>
+        {tab === 'grid' && <Grid />}
+        {tab === 'today' && <Today />}
+        {tab === 'objects' && <Objects />}
       </div>
     </main>
+  )
+}
+
+function TabButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean
+  onClick: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={
+        'rounded-md px-3 py-1.5 text-sm font-medium ' +
+        (active
+          ? 'bg-neutral-800 text-white'
+          : 'text-neutral-400 hover:text-neutral-200')
+      }
+    >
+      {children}
+    </button>
   )
 }
 
