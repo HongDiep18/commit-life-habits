@@ -24,30 +24,13 @@ Three screens
 - One row per active object: name, today's total, and quick-add buttons +5 +15 +30 plus a free-text input.
 - Every tap is an append, never an overwrite.
 
-Schema (final)
+---
 
-tracker_object
-id uuid pk
-user_id uuid not null → auth.users(id)
-name text not null
-description text
-hue int not null default 145 -- 0-360, shades derived in CSS
-goal_minutes int not null default 30
-archived_at timestamptz
-created_at timestamptz not null default now()
+3 core screens:
 
-tick_event -- append-only, this IS the history
-id uuid pk
-object_id uuid not null → tracker_object(id) on delete cascade
-tick_date date not null -- sent by the client, never current_date
-minutes int not null -- can be negative, to undo a mistake
-created_at timestamptz not null default now()
-
-index on (object_id, tick_date)
-
-daily_total -- a VIEW, not a table
-select object_id, tick_date, sum(minutes) as minutes
-from tick_event group by 1,2
+1. Contribution grid (like the GitHub image) — visualizes activity over the year
+2. Object manager — create/list trackable things (name, optional description)
+3. Daily tick table — for "today", tick an object N times (your "round time 0→x"), pick object via dropdown, or see a grid view
 
 Two tables and one view. No triggers, no audit table, full history preserved — every +15 you ever tapped is still there, with its timestamp.
 
@@ -61,19 +44,21 @@ Color
 
 Shade = today's minutes ÷ that object's goal:
 
-┌───────────┬──────────┐
-│ Ratio │ Shade │
-├───────────┼──────────┤
-│ 0 │ grey │
-├───────────┼──────────┤
-│ under 50% │ lightest │
-├───────────┼──────────┤
-│ 50–99% │ light │
-├───────────┼──────────┤
-│ 100–149% │ mid │
-├───────────┼──────────┤
-│ 150%+ │ darkest │
-└───────────┴──────────┘
+Then bucket minutes into color levels:
+
+┌──────────────────┬──────────────┐
+│ Minutes that day │ Square color │
+├──────────────────┼──────────────┤
+│ 0 │ grey (empty) │
+├──────────────────┼──────────────┤
+│ 1–30 │ light green │
+├──────────────────┼──────────────┤
+│ 31–60 │ green │
+├──────────────────┼──────────────┤
+│ 61–120 │ medium green │
+├──────────────────┼──────────────┤
+│ 120+ │ dark green │
+└──────────────────┴──────────────┘
 
 So 20 min of meditation (goal 20) and 120 min of reading (goal 120) both show dark green. That's the fix for the fixed-bucket problem.
 
