@@ -2,7 +2,7 @@
 
 A minimal habit and activity tracker. Log minutes against the things you care
 about, then watch them fill a GitHub-style contribution grid over the last 12
-months. Built with React 19, Vite, Tailwind CSS v4, and Supabase.
+months. Built with React 19, Vite, Tailwind CSS v4, and Supabase
 
 ---
 
@@ -20,15 +20,15 @@ months. Built with React 19, Vite, Tailwind CSS v4, and Supabase.
 
 ---
 
-## Tech stack
+## Tech stack -
 
-| Area     | Choice                          |
-| -------- | ------------------------------- |
-| UI       | React 19                        |
-| Build    | Vite                            |
-| Styling  | Tailwind CSS v4                 |
-| Backend  | Supabase (Postgres + Auth)      |
-| Language | TypeScript                      |
+| Area     | Choice                     |
+| -------- | -------------------------- |
+| UI       | React 19                   |
+| Build    | Vite                       |
+| Styling  | Tailwind CSS v4            |
+| Backend  | Supabase (Postgres + Auth) |
+| Language | TypeScript                 |
 
 ---
 
@@ -98,12 +98,12 @@ anyone who finds your URL can create an account and read data.
 
 ## Scripts
 
-| Command           | What it does                          |
-| ----------------- | ------------------------------------- |
-| `npm run dev`     | Start the Vite dev server             |
-| `npm run build`   | Type-check (`tsc -b`) and build       |
-| `npm run preview` | Preview the production build          |
-| `npm run lint`    | Run ESLint                            |
+| Command           | What it does                    |
+| ----------------- | ------------------------------- |
+| `npm run dev`     | Start the Vite dev server       |
+| `npm run build`   | Type-check (`tsc -b`) and build |
+| `npm run preview` | Preview the production build    |
+| `npm run lint`    | Run ESLint                      |
 
 ---
 
