@@ -1,4 +1,5 @@
 tsc --noEmit passed clean — zero type errors. Step 6 is done.
+clear done
 
 What you now have — the Grid (Step 6)
 
