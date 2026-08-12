@@ -6,7 +6,7 @@ months. Built with React 19, Vite, Tailwind CSS v4, and Supabase
 
 ---
 
-## Features
+## Features ---
 
 - **Grid** — a year-long contribution calendar. Cells are shaded by minutes
   logged per day, with total minutes, active days, current streak, and longest
