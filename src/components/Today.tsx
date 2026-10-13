@@ -23,6 +23,11 @@ type LoadState =
 
 export function Today() {
   const today = localToday();
+  const niceDate = new Date().toLocaleDateString(undefined, {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
 
   const [load, setLoad] = useState<LoadState>({ state: "loading" });
   const [objects, setObjects] = useState<TrackerObject[]>([]);
@@ -100,72 +105,86 @@ export function Today() {
   if (load.state === "error")
     return <p className="font-mono text-sm text-red-400">{load.message}</p>;
 
-  if (objects.length === 0)
-    return (
-      <p className="text-sm text-neutral-500">
-        No objects yet. Add one on the Objects tab first.
-      </p>
-    );
-
   return (
-    <section className="space-y-3">
-      {objects.map((obj) => {
-        const total = totals[obj.id] ?? 0;
-        return (
-          <div
-            key={obj.id}
-            className="rounded-lg border border-neutral-800 bg-neutral-900 p-4 space-y-3"
-          >
-            <div className="flex items-center gap-3">
-              <span
-                className="h-4 w-4 shrink-0 rounded-full"
-                style={{ backgroundColor: `hsl(${obj.hue} 65% 45%)` }}
-              />
-              <p className="flex-1 font-medium text-white">{obj.name}</p>
-              <p className="text-sm text-neutral-400">
-                <span className="text-lg font-semibold text-green-400">
-                  {total}
-                </span>{" "}
-                min today
-              </p>
-            </div>
+    <section className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight text-white">
+          Today
+        </h1>
+        <p className="mt-1 text-sm text-neutral-400">{niceDate}</p>
+      </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              {QUICK.map((m) => (
-                <button
-                  key={m}
-                  onClick={() => addTick(obj.id, m)}
-                  className="rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-500"
-                >
-                  +{m}
-                </button>
-              ))}
+      {objects.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-neutral-800 bg-neutral-900/40 p-10 text-center">
+          <p className="text-sm text-neutral-400">
+            No objects yet. Create one on the{" "}
+            <span className="text-neutral-200">Objects</span> tab to start
+            logging.
+          </p>
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {objects.map((obj) => {
+            const total = totals[obj.id] ?? 0;
+            return (
+              <div
+                key={obj.id}
+                className="rounded-xl border border-neutral-800 bg-neutral-900/50 p-5 transition hover:border-neutral-700"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <span
+                      className="h-3.5 w-3.5 shrink-0 rounded-full"
+                      style={{ backgroundColor: `hsl(${obj.hue} 65% 45%)` }}
+                    />
+                    <p className="font-medium text-white">{obj.name}</p>
+                  </div>
+                  <p className="text-right leading-none">
+                    <span className="text-3xl font-semibold tracking-tight text-emerald-400">
+                      {total}
+                    </span>
+                    <span className="ml-1 text-xs text-neutral-500">min</span>
+                  </p>
+                </div>
 
-              <div className="ml-auto flex items-center gap-2">
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  value={custom[obj.id] ?? ""}
-                  onChange={(e) =>
-                    setCustom((c) => ({ ...c, [obj.id]: e.target.value }))
-                  }
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") addCustom(obj.id);
-                  }}
-                  placeholder="min"
-                  className="w-16 rounded-md border border-neutral-800 bg-neutral-950 px-2 py-1.5 text-sm outline-none focus:border-green-600"
-                />
-                <button
-                  onClick={() => addCustom(obj.id)}
-                  className="rounded-md border border-neutral-700 px-3 py-1.5 text-sm text-neutral-300 hover:border-green-600 hover:text-white"
-                >
-                  Add
-                </button>
+                <div className="mt-5 flex items-center gap-2">
+                  {QUICK.map((m) => (
+                    <button
+                      key={m}
+                      onClick={() => addTick(obj.id, m)}
+                      className="rounded-lg bg-emerald-600 px-3.5 py-2 text-sm font-medium text-white transition hover:bg-emerald-500"
+                    >
+                      +{m}
+                    </button>
+                  ))}
+
+                  <div className="ml-auto flex items-center gap-2">
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      value={custom[obj.id] ?? ""}
+                      onChange={(e) =>
+                        setCustom((c) => ({ ...c, [obj.id]: e.target.value }))
+                      }
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") addCustom(obj.id);
+                      }}
+                      placeholder="min"
+                      className="w-16 rounded-lg border border-neutral-800 bg-neutral-950 px-2.5 py-2 text-sm outline-none transition focus:border-emerald-600"
+                    />
+                    <button
+                      onClick={() => addCustom(obj.id)}
+                      className="rounded-lg border border-neutral-700 px-3 py-2 text-sm text-neutral-300 transition hover:border-emerald-600 hover:text-white"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        );
-      })}
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 }
