@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
-import type { Session } from '@supabase/supabase-js'
-import { supabase } from './supabase'
+import { useEffect, useState } from "react";
+import type { Session } from "@supabase/supabase-js";
+import { supabase } from "./supabase";
 
 /**
  * Tracks the current login session.
@@ -10,23 +10,23 @@ import { supabase } from './supabase'
  * every refresh, even when already signed in.
  */
 export function useSession() {
-  const [session, setSession] = useState<Session | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Was there a session left over from last time? It lives in localStorage.
     supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session)
-      setLoading(false)
-    })
+      setSession(data.session);
+      setLoading(false);
+    });
 
     // Then keep listening: sign in, sign out, token refresh all land here.
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
+      setSession(session);
+    });
 
-    return () => sub.subscription.unsubscribe()
-  }, [])
+    return () => sub.subscription.unsubscribe();
+  }, []);
 
-  return { session, loading }
+  return { session, loading };
 }
