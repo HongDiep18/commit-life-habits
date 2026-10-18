@@ -29,6 +29,10 @@ export function Today() {
     day: "numeric",
   });
 
+  // const niceDate = new Date().toLocaleDateString(undefined, {
+  //   day: "numeric",
+  // });
+
   const [load, setLoad] = useState<LoadState>({ state: "loading" });
   const [objects, setObjects] = useState<TrackerObject[]>([]);
   const [totals, setTotals] = useState<Record<string, number>>({}); // object_id -> minutes today
